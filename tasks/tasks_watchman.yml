@@ -1,0 +1,67 @@
+---
+  - name: Watchman | Check if is present
+    command: test -x /usr/local/bin/watchman
+    ignore_errors: yes
+    register: watchman_present
+    tags:
+        -watchman
+
+  - name: Watchman | Install build dependencies
+    apt: pkg="{{item}}" state="present"
+    when: watchman_present | failed
+    with_items:
+      - "autoconf"
+      - "python-dev"
+    become: yes
+    tags:
+        -watchman
+
+  - name: Watchman | Download distrubution
+    get_url: url="https://github.com/facebook/watchman/archive/v{{watchman_version}}.tar.gz"  dest=/tmp/watchman.tar.gz
+    when: watchman_present | failed
+    tags:
+        -watchman
+
+  - name: Watchman | Unpack distribution
+    unarchive: src=/tmp/watchman.tar.gz dest=/tmp copy=no
+    when: watchman_present | failed
+    tags:
+        -watchman
+
+  - name: Watchman |  Autogen
+    shell: ./autogen.sh
+    args:
+      chdir: "/tmp/watchman-{{watchman_version}}"
+    when: watchman_present | failed
+    tags:
+        -watchman
+
+  - name: Watchman | Configure
+    shell: ./configure
+    args:
+      chdir: "/tmp/watchman-{{watchman_version}}"
+    when: watchman_present | failed
+    tags:
+        -watchman
+
+  - name: Watchman | Make
+    shell: make
+    args:
+      chdir: "/tmp/watchman-{{watchman_version}}"
+    when: watchman_present | failed
+    tags:
+        -watchman
+
+  - name: Watchman | Make Install
+    shell: make install
+    args:
+      chdir: "/tmp/watchman-{{watchman_version}}"
+    when: watchman_present | failed
+    become: yes
+    tags:
+        -watchman
+
+  - name: Watchman | Cleanup
+    file: path={{item}} state=absent
+    with_items:
+      - "/tmp/watchman-{{watchman_version}"
