@@ -64,4 +64,4 @@
   - name: Watchman | Cleanup
     file: path={{item}} state=absent
     with_items:
-      - "/tmp/watchman-{{watchman_version}"
+      - "/tmp/watchman-{{watchman_version}}"
