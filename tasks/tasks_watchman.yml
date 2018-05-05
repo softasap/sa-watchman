@@ -8,8 +8,10 @@
 
   - name: Watchman | Install build dependencies
     apt: pkg="{{item}}" state="present"
-    when: watchman_present | failed
+    when: watchman_present is failed
     with_items:
+      - "libtool"
+      - "pkg-config"
       - "autoconf"
       - "python-dev"
     become: yes
@@ -18,13 +20,13 @@
 
   - name: Watchman | Download distrubution
     get_url: url="https://github.com/facebook/watchman/archive/v{{watchman_version}}.tar.gz"  dest=/tmp/watchman.tar.gz
-    when: watchman_present | failed
+    when: watchman_present is failed
     tags:
         -watchman
 
   - name: Watchman | Unpack distribution
     unarchive: src=/tmp/watchman.tar.gz dest=/tmp copy=no
-    when: watchman_present | failed
+    when: watchman_present is failed
     tags:
         -watchman
 
@@ -32,7 +34,7 @@
     shell: ./autogen.sh
     args:
       chdir: "/tmp/watchman-{{watchman_version}}"
-    when: watchman_present | failed
+    when: watchman_present is failed
     tags:
         -watchman
 
@@ -40,7 +42,7 @@
     shell: ./configure
     args:
       chdir: "/tmp/watchman-{{watchman_version}}"
-    when: watchman_present | failed
+    when: watchman_present is failed
     tags:
         -watchman
 
@@ -48,7 +50,7 @@
     shell: make
     args:
       chdir: "/tmp/watchman-{{watchman_version}}"
-    when: watchman_present | failed
+    when: watchman_present is failed
     tags:
         -watchman
 
@@ -56,7 +58,7 @@
     shell: make install
     args:
       chdir: "/tmp/watchman-{{watchman_version}}"
-    when: watchman_present | failed
+    when: watchman_present is failed
     become: yes
     tags:
         -watchman
