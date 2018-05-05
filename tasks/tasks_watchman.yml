@@ -11,6 +11,7 @@
     when: watchman_present is failed
     with_items:
       - "libtool"
+      - "pkg-config"
       - "autoconf"
       - "python-dev"
     become: yes
