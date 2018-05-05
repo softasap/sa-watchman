@@ -10,6 +10,7 @@
     apt: pkg="{{item}}" state="present"
     when: watchman_present is failed
     with_items:
+      - "libtool"
       - "autoconf"
       - "python-dev"
     become: yes
